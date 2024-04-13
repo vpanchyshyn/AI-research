@@ -2,7 +2,7 @@
 #Початковий розвʼязок ШІ: коротка умова (пояснено логіку, але без прикладів)
 #Ця імплементація не враховує випадок, коли потрібного числа не існує, а отже створює нескінченний цикл
 
-def sum_of_powers(n, p):
+def dig_pow(n, p):
     k = 1
     while True:
         result = sum(int(digit)**(p + i) for i, digit in enumerate(str(n)))
@@ -11,7 +11,7 @@ def sum_of_powers(n, p):
         k += 1
 
 #При уточненні, щодо нескінченного циклу, виправляє це, додаючи аргумент для ліміту кількості ітерацій (якого не було в умові)
-def sum_of_powers(n, p, max_iterations=1000):
+def dig_pow(n, p, max_iterations=1000):
     k = 1
     iterations = 0
     while iterations < max_iterations:
@@ -24,7 +24,7 @@ def sum_of_powers(n, p, max_iterations=1000):
 
 #При наданні повної умови з формулою для розрахунку та прикладами виконання коду, спочатку знову створює нескінченний цикл,
 #але з уточненням цього генерує повністю правильний, хоч і не найбільш оптимальний, код:
-def find_k(n, p):
+def dig_pow(n, p):
     digits = [int(digit) for digit in str(n)]
     current_sum = sum(digit ** (p + i) for i, digit in enumerate(digits))
     k = 1
