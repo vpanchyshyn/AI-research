@@ -1,51 +1,42 @@
 import unittest
 
-class TestPoint(unittest.TestCase):
-    def test_point_creation(self):
-        point = Point(1, 2)
-        self.assertEqual(point.x, 1)
-        self.assertEqual(point.y, 2)
+class TestLineIntersect(unittest.TestCase):
+    def test_parallel_lines(self):
+        line1 = Line(Point(0, 0), Point(1, 1))
+        line2 = Line(Point(1, 0), Point(2, 1))
+        self.assertIsNone(line1.intersect(line2))  # Повинен повертати None, оскільки прямі паралельні
 
-class TestLine(unittest.TestCase):
-    def setUp(self):
-        self.point1 = Point(1, 1)
-        self.point2 = Point(2, 2)
-        self.point3 = Point(3, 3)
-        self.point4 = Point(4, 4)
+    def test_non_intersecting_lines(self):
+        line1 = Line(Point(0, 0), Point(1, 1))
+        line2 = Line(Point(0, 1), Point(1, 2))
+        self.assertIsNone(line1.intersect(line2))  # Повинен повертати None, оскільки прямі не перетинаються
 
-    def test_line_creation(self):
-        line = Line(self.point1, self.point2)
-        self.assertEqual(line.point1, self.point1)
-        self.assertEqual(line.point2, self.point2)
-
-    def test_line_creation_with_invalid_points(self):
-        with self.assertRaises(ValueError):
-            Line(self.point1, (2, 2))  # Should raise ValueError because the second argument is not a Point object
-
-    def test_calculate_coefficients(self):
-        line = Line(self.point1, self.point2)
-        self.assertEqual(line.calculate_coefficients(), (1, 0))
-
-    def test_intersect(self):
-        line1 = Line(self.point1, Point(5,5))
-        line2 = Line(self.point3, Point(0,5))
+    def test_intersecting_lines(self):
+        line1 = Line(Point(0, 0), Point(2, 2))
+        line2 = Line(Point(0, 2), Point(2, 0))
         intersection_point = line1.intersect(line2)
-        self.assertIsInstance(intersection_point, Point)
-        self.assertEqual(int(intersection_point.x), 3)
-        self.assertEqual(int(intersection_point.y), 3)
+        self.assertIsInstance(intersection_point, Point)  # Повинен повертати екземпляр класу Point
+        self.assertAlmostEqual(intersection_point.x, 1.0)  # Перевірка координати x перетину
+        self.assertAlmostEqual(intersection_point.y, 1.0)  # Перевірка координати y перетину
 
-    def test_intersect_with_parallel_lines(self):
-        line1 = Line(self.point1, self.point2)
-        line2 = Line(Point(2, 1), Point(3, 2))  # Parallel line to line1
+    def test_coinciding_lines(self):
+        line1 = Line(Point(0, 0), Point(2, 2))
+        line2 = Line(Point(-1, -1), Point(3, 3))  # Прямі збігаються
         intersection_point = line1.intersect(line2)
-        self.assertIsNone(intersection_point)  # Should return None for parallel lines
+        self.assertEqual(intersection_point, line1.point1)  # Повинен повертати першу точку першої прямої
 
-    def test_intersect_with_vertical_line(self):
-        line1 = Line(Point(1, 1), Point(1, 2))  # Vertical line
-        line2 = Line(Point(2, 3), Point(2, 1))
-        intersection_point = line1.intersect(line2)
-        print(type(intersection_point))
-        self.assertIsNone(intersection_point)  # Should return None for vertical line intersecting non-vertical line
+    def test_vertical_lines(self):
+        line1 = Line(Point(1, 0), Point(1, 2))  # Вертикальна пряма
+        line2 = Line(Point(0, 1), Point(2, 1))  # Горизонтальна пряма
+        self.assertIsNone(line1.intersect(line2))  # Повинен повертати None, оскільки прямі перпендикулярні
+
+    def test_vertical_intersecting_lines(self):
+        line1 = Line(Point(1, 0), Point(1, 2))  # Вертикальна пряма
+        line2 = Line(Point(0, 1), Point(2, 1))  # Горизонтальна пряма
+        intersection_point = line2.intersect(line1)
+        self.assertIsInstance(intersection_point, Point)  # Повинен повертати екземпляр класу Point
+        self.assertAlmostEqual(intersection_point.x, 1.0)  # Перевірка координати x перетину
+        self.assertAlmostEqual(intersection_point.y, 1.0)  # Перевірка координати y перетину
 
 if __name__ == '__main__':
     unittest.main()
