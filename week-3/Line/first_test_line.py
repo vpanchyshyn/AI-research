@@ -28,7 +28,7 @@ class TestLineIntersect(unittest.TestCase):
     def test_vertical_lines(self):
         line1 = Line(Point(1, 0), Point(1, 2))  # Вертикальна пряма
         line2 = Line(Point(0, 1), Point(2, 1))  # Горизонтальна пряма
-        self.assertIsNone(line1.intersect(line2))  # Повинен повертати None, оскільки прямі перпендикулярні
+        self.assertIsInstance(line1.intersect(line2), Point)
 
     def test_vertical_intersecting_lines(self):
         line1 = Line(Point(1, 0), Point(1, 2))  # Вертикальна пряма
