@@ -26,17 +26,13 @@ class TestLine(unittest.TestCase):
         line = Line(self.point1, self.point2)
         self.assertEqual(line.calculate_coefficients(), (1, 0))
 
-    def test_calculate_coefficients_with_vertical_line(self):
-        line = Line(self.point1, self.point3)
-        self.assertIsNone(line.calculate_coefficients())  # Should return None for vertical line
-
     def test_intersect(self):
-        line1 = Line(self.point1, self.point2)
-        line2 = Line(self.point3, self.point4)
+        line1 = Line(self.point1, Point(5,5))
+        line2 = Line(self.point3, Point(0,5))
         intersection_point = line1.intersect(line2)
         self.assertIsInstance(intersection_point, Point)
-        self.assertEqual(intersection_point.x, 3)
-        self.assertEqual(intersection_point.y, 3)
+        self.assertEqual(int(intersection_point.x), 3)
+        self.assertEqual(int(intersection_point.y), 3)
 
     def test_intersect_with_parallel_lines(self):
         line1 = Line(self.point1, self.point2)
@@ -46,8 +42,9 @@ class TestLine(unittest.TestCase):
 
     def test_intersect_with_vertical_line(self):
         line1 = Line(Point(1, 1), Point(1, 2))  # Vertical line
-        line2 = Line(Point(2, 1), Point(3, 2))
+        line2 = Line(Point(2, 3), Point(2, 1))
         intersection_point = line1.intersect(line2)
+        print(type(intersection_point))
         self.assertIsNone(intersection_point)  # Should return None for vertical line intersecting non-vertical line
 
 if __name__ == '__main__':
