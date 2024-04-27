@@ -1,51 +1,37 @@
-"""code6"""
 class Point:
-    """code6"""
-    def __init__(self,x,y):
-        """code6"""
-        self.x = x
-        self.y = y
-    def __eq__(self, _other):
-        if isinstance(_other, Point):
-            if self.x == _other.x and self.y == _other.y:
-                raise ValueError('Ну не вийде створити такої лінії')
+    """point object"""
+    def __init__(self, x, y) -> None:
+        self.x = float(x)
+        self.y = float(y)
+
+    def __eq__(self, other) -> bool:
+        return self.x == other.x and self.y == other.y
+
+
 class Line:
-    """code6"""
-    def __init__(self, point1, point2):
-        """code6"""
-        if not isinstance(point1, Point) or not isinstance(point2, Point):
-            raise ValueError('Має будуть Point')
+    """line object"""
+    def __init__(self, point1, point2) -> None:
         self.point1 = point1
         self.point2 = point2
-        try:
-            self.k, self.b = self.calculate_coefficients()
-        except TypeError:
+
+    def intersect(self, other):
+        """check if two lines intersect"""
+        y_diff1 = self.point2.y - self.point1.y
+        x_diff1 = self.point1.x - self.point2.x
+        constant1 = y_diff1 * (self.point1.x) + x_diff1 * (self.point1.y)
+        
+        y_diff2 = other.point2.y - other.point1.y
+        x_diff2 = other.point1.x - other.point2.x
+        constant2 = y_diff2 * (other.point1.x) + x_diff2 * (other.point1.y)
+
+        determinant = y_diff1 * x_diff2 - y_diff2 * x_diff1
+
+        if determinant == 0:
+            if y_diff1 * other.point1.x + x_diff1 * other.point1.y == constant1 and \
+                    y_diff1 * other.point2.x + x_diff1 * other.point2.y == constant1:
+                return self
             return None
-    def calculate_coefficients(self):
-        """code6"""
-        x1, y1 = self.point1.x, self.point1.y
-        x2, y2 = self.point2.x, self.point2.y
-        if x2 - x1 == 0:
-            return None
-        k = (y2 - y1) / (x2 - x1)
-        b = y1 - k * x1
-        return k, b
-    def intersect(self, line):
-        """code6"""
-        x1 = self.point1.x, self.point1.y
-        x2 = self.point2.x, self.point2.y
-        if x2 - x1 == 0:
-            return None
-        try:
-            k_self, b_self = self.calculate_coefficients()
-            k_line, b_line = line.calculate_coefficients()
-        except TypeError:
-            return None
-        if k_self == k_line and b_self == b_line:
-            return self
-        try:
-            x = (b_line - b_self) / (k_self - k_line)
-        except ZeroDivisionError:
-            return None
-        y = k_self * x + b_self
-        return Point(x, y)
+
+        intersection_x = (x_diff2 * constant1 - x_diff1 * constant2) / determinant
+        intersection_y = (y_diff1 * constant2 - y_diff2 * constant1) / determinant
+        return Point(intersection_x, intersection_y)
