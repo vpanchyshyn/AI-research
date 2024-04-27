@@ -1,37 +1,72 @@
+"""
+Line module."""
 class Point:
-    """point object"""
-    def __init__(self, x, y) -> None:
-        self.x = float(x)
-        self.y = float(y)
-
-    def __eq__(self, other) -> bool:
-        return self.x == other.x and self.y == other.y
-
+    """
+    Point class."""
+    def __init__(self, x: float, y: float) -> None:
+        """
+        Initializes Point class attributes."""
+        self.x = x
+        self.y = y
 
 class Line:
-    """line object"""
-    def __init__(self, point1, point2) -> None:
-        self.point1 = point1
-        self.point2 = point2
+    """
+    Line class."""
+    def __init__(self, point_1: 'Point', point_2: 'Point') -> None:
+        """
+        Initializes Line class attributes."""
+        if (point_1.x, point_1.y) != (point_2.x, point_2.y):
+            self.point_1 = point_1
+            self.point_2 = point_2
+        else:
 
-    def intersect(self, other):
-        """check if two lines intersect"""
-        y_diff1 = self.point2.y - self.point1.y
-        x_diff1 = self.point1.x - self.point2.x
-        constant1 = y_diff1 * (self.point1.x) + x_diff1 * (self.point1.y)
-        
-        y_diff2 = other.point2.y - other.point1.y
-        x_diff2 = other.point1.x - other.point2.x
-        constant2 = y_diff2 * (other.point1.x) + x_diff2 * (other.point1.y)
+            raise ValueError("Can't create the line from equal points")
 
-        determinant = y_diff1 * x_diff2 - y_diff2 * x_diff1
+    def intersect(self, other_line: 'Line'):
+        """
+        Checks whether lines intersect or not."""
+        try:
+            k_1 = (self.point_2.y - self.point_1.y)/(self.point_2.x - self.point_1.x)
+            b_1 = self.point_1.y - (k_1*self.point_1.x)
+        except ZeroDivisionError: # that means x2 = x1
+            k_1 = 1
+            x_point = self.point_1.x
+            b_1 = None
 
-        if determinant == 0:
-            if y_diff1 * other.point1.x + x_diff1 * other.point1.y == constant1 and \
-                    y_diff1 * other.point2.x + x_diff1 * other.point2.y == constant1:
-                return self
+        try:
+            k_2 = (other_line.point_2.y - other_line.point_1.y)/(
+                other_line.point_2.x - other_line.point_1.x)
+            b_2 = other_line.point_1.y - (k_2*other_line.point_1.x)
+        except ZeroDivisionError:
+            k_2 = 1
+            x_point = other_line.point_1.x
+            b_2 = None
+
+        if k_1 and k_2:
+            if not b_1 is None and not b_2 is None:
+                if k_1 == k_2:
+                    if b_1 == b_2:
+                        return self
+                    return None
+                x_point = (b_2 - b_1)/(k_1 - k_2)
+                y_point = (k_1*x_point) + b_1
+                return Point(x_point, y_point)
             return None
-
-        intersection_x = (x_diff2 * constant1 - x_diff1 * constant2) / determinant
-        intersection_y = (y_diff1 * constant2 - y_diff2 * constant1) / determinant
-        return Point(intersection_x, intersection_y)
+        if not k_1 and k_2:
+            if b_1 is not None and b_2 is not None:
+                x_point = (b_2 - b_1)/(k_1 - k_2)
+                y_point = (k_1*x_point) + b_1
+                return Point(x_point, y_point)
+            x_point = other_line.point_1.x
+            return Point(x_point, b_1)
+        if k_1 and not k_2:
+            if b_1 is not None and b_2 is not None:
+                x_point = (b_2 - b_1)/(k_1 - k_2)
+                y_point = (k_1*x_point) + b_1
+                return Point(x_point, y_point)
+            x_point = self.point_1.x
+            return Point(x_point, b_2)
+        if b_1 == b_2:
+            return self
+        return None
+# return None
